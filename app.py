@@ -1,3 +1,4 @@
+import ast
 from collections import namedtuple
 from functools import wraps
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -82,13 +83,37 @@ def getActualWeather():
     weather_dto = WeatherInfoDto(actualWeatherData.name, int(actualWeatherData.main.temp - 273.15), dateAsString)
     return weather_dto.toJSON()
 
+@app.route('/forecast')
+@token_required
+def getForecast():
+    logfile = open("logs/weatherForecast.json", "r")
+    forecast_weather_data = logfile.read()
+    logfile.close()
+    result = ast.literal_eval(forecast_weather_data)
+    return json.dumps(result)
+    # return forecast_weather_data
+
+    # return getWeatherForecastDataFromApi()
+
+@app.route('/logdata')
+@token_required
+def get_log():
+    logfile = open("weatherLog.csv", "r")
+    forecast_weather_data = logfile.read()
+    logfile.close()
+    weather_log = []
+    for line in forecast_weather_data:
+        splitted_values = line.split(",")
+        weather_log.append(WeatherInfoDto(splitted_values[0], splitted_values[1], splitted_values[2]))
+    return jsonify(weather_log)
+
 def logWeatherInfo():
     logger = weatherLogger.WeatherLogger()
     logger.writeDataToFile(getWeatherDataFromApi())
     logger.writeForecastDataToFile(str(getWeatherForecastDataFromApi()))
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=logWeatherInfo, trigger="interval", seconds=30)
+scheduler.add_job(func=logWeatherInfo, trigger="interval", seconds=3)
 scheduler.start()
 
 if __name__ == '__main__':
