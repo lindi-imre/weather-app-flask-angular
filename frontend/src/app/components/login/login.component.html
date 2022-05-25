@@ -1,1 +1,23 @@
-<p>login works!</p>
+<div class="main-container">
+  <div class="main">
+      <input type="checkbox" id="chk" aria-hidden="true" checked="true">
+
+        <div class="signup">
+          <form>
+            <label for="chk" aria-hidden="true">Register</label>
+            <input type="text" name="email" placeholder="Username" required="">
+            <input type="password" name="pswd" placeholder="Password" required="">
+
+          </form>
+        </div>
+
+        <div class="login">
+          <form>
+            <label for="chk" aria-hidden="true">Login</label>
+            <input type="text" name="email" placeholder="Email" required="" #username>
+            <input type="password" name="pswd" placeholder="Password" required="" #password>
+            <button (click)="doLogin(username.value, password.value)">Login</button>
+          </form>
+        </div>
+    </div>
+  </div>
