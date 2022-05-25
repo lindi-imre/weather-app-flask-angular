@@ -8,6 +8,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import {HttpClientModule} from "@angular/common/http";
 import {FormsModule} from "@angular/forms";
 import { TemperatureEntryComponent } from './components/temperature-entry/temperature-entry.component';
+import {DatePipe} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -22,7 +23,9 @@ import { TemperatureEntryComponent } from './components/temperature-entry/temper
     FormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    DatePipe
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

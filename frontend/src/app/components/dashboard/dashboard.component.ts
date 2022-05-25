@@ -21,6 +21,8 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.getActualWeather();
+    this.getForecast();
+
   }
 
   getActualWeather(): any{
@@ -29,11 +31,46 @@ export class DashboardComponent implements OnInit {
         this.city = resp.city;
         this.temperature = resp.temperature;
         this.actualDate = resp.current_date;
-        console.log(resp);
     }, error => {
         alert('Please login before use our services.');
         this.router.navigate(['login']);
     });
+  }
+
+  getForecast() {
+    this.client.get<Forecast>('http://localhost:5000/forecast',
+      { headers: new HttpHeaders({'token': '' + localStorage.getItem('token')})}).subscribe(resp => {
+        this.forecastData = resp;
+        this.forecastElements = this.forecastData?.list.slice(0, this.actualPage * 10);
+    });
+  }
+
+  paginateNext() {
+    // @ts-ignore
+    if(this.forecastData?.list.length / 10 > this.actualPage) {
+      this.actualPage++;
+      this.forecastElements = this.forecastData?.list.slice((this.actualPage -1) * 10, this.actualPage * 10);
+    }
+    else {
+      alert("This is the end of the list!");
+    }
+  }
+
+  paginatePrevious() {
+    // @ts-ignore
+    if(this.actualPage > 1) {
+      this.actualPage--;
+      this.forecastElements = this.forecastData?.list.slice((this.actualPage -1) * 10, this.actualPage * 10);
+    }
+    else {
+      alert("This is the beginning of the list!");
+    }
+  }
+
+  logout() {
+    localStorage.clear();
+    alert('You\'ve successfully logged in.');
+    this.router.navigate(['login']);
   }
 
 }
