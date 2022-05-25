@@ -67,7 +67,7 @@ def loginJwt():
                 'user': content["username"],
                 'expiration': str(datetime.utcnow() + timedelta(seconds=600))
             }, app.config['SECRET_KEY'])
-        return jsonify({"token": token.encode().decode("UTF-8")})
+        return jsonify({"token": token})
 
     return jsonify({"message": "invalid login credentials"})
 
