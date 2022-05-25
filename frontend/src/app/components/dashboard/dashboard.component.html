@@ -14,3 +14,16 @@
       </div>
     </div>
   </div>
+
+  <div class="forecast-label">
+    Next 5 days Forecast
+  </div>
+  <div class="log-container" *ngIf="forecastData">
+    <app-temperature-entry *ngFor="let element of forecastElements" [temperature]="element.main.temp" [timestamp]="element.dt"></app-temperature-entry>
+  </div>
+  <div class="buttons-container">
+    <button class="previous" (click)="paginatePrevious()">Prev</button>
+    <button class="next" (click)="paginateNext()">Next</button>
+  </div>
+  <button class="logout" (click)="logout()">Logout</button>
+</div>
