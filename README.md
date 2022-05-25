@@ -1,1 +1,1 @@
-# weather-app-flask-angular
+# Weather app with flask and angular
