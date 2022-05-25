@@ -1,14 +1,33 @@
+from collections import namedtuple
 from functools import wraps
+from apscheduler.schedulers.background import BackgroundScheduler
 
 import jwt
+import json
+import requests
 from flask import Flask, jsonify, request
 from datetime import timedelta, datetime
 from flask_cors import CORS
 
+import weatherLogger
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'VERYSECRETKEY'
 CORS(app)
+
+
+def weatherDecoder(weatherDict):
+    return namedtuple('X', weatherDict.keys())(*weatherDict.values())
+
+
+def getWeatherDataFromApi():
+    response = requests.get("https://api.openweathermap.org/data/2.5/weather?q=Kecskemet,hu&APPID=ac230c93f3172f79b1a1fc48bf5da4c6")
+    weather = json.loads(json.dumps(response.json()), object_hook=weatherDecoder)
+    return weather
+
+def getWeatherForecastDataFromApi():
+    response = requests.get("https://api.openweathermap.org/data/2.5/forecast?lat=46.895092&lon=19.687977&appid=ac230c93f3172f79b1a1fc48bf5da4c6")
+    return response.json()
 
 
 def token_required(func):
@@ -45,6 +64,15 @@ def loginJwt():
         return jsonify({"token": token.encode().decode("UTF-8")})
 
     return jsonify({"message" : "invalid login credentials"})
+
+def logWeatherInfo():
+    logger = weatherLogger.WeatherLogger()
+    logger.writeDataToFile(getWeatherDataFromApi())
+    logger.writeForecastDataToFile(str(getWeatherForecastDataFromApi()))
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=logWeatherInfo, trigger="interval", seconds=30)
+scheduler.start()
 
 if __name__ == '__main__':
     app.run()
