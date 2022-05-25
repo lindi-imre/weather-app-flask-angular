@@ -10,11 +10,13 @@ from datetime import timedelta, datetime
 from flask_cors import CORS
 
 import weatherLogger
+from models.weather_info import WeatherInfoDto
 
 app = Flask(__name__)
+# app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['SECRET_KEY'] = 'VERYSECRETKEY'
-CORS(app)
-
+# CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 def weatherDecoder(weatherDict):
     return namedtuple('X', weatherDict.keys())(*weatherDict.values())
@@ -35,16 +37,19 @@ def token_required(func):
     @wraps(func)
     def decorated(*args, **kwargs):
         token = request.headers.get('token')
+        print("sdsdf")
         if not token:
             return jsonify({'Alert!': 'Token is missing!'}), 401
 
         try:
+            print("happening")
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
             print(data)
         except jwt.InvalidTokenError:
             return 'Invalid token. Please log in again.'
-        except:
-           return jsonify({'Message': 'Invalid token'}), 403
+        except Exception as e:
+            print(str(e))
+            return jsonify({'message': 'Invalid token'}), 403
         return func(*args, **kwargs)
     return decorated
 
@@ -63,7 +68,19 @@ def loginJwt():
             }, app.config['SECRET_KEY'])
         return jsonify({"token": token.encode().decode("UTF-8")})
 
-    return jsonify({"message" : "invalid login credentials"})
+    return jsonify({"message": "invalid login credentials"})
+
+
+@app.route('/actual-weather', methods=['GET'])
+@token_required
+def getActualWeather():
+    print("started")
+    actualWeatherData = getWeatherDataFromApi()
+    actual_date = datetime.now()
+    dateAsString = str(actual_date.year) + '-' + str(actual_date.month) + '-' + str(actual_date.day)
+    # kelvin to celsius convert
+    weather_dto = WeatherInfoDto(actualWeatherData.name, int(actualWeatherData.main.temp - 273.15), dateAsString)
+    return weather_dto.toJSON()
 
 def logWeatherInfo():
     logger = weatherLogger.WeatherLogger()

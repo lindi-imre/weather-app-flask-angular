@@ -7,12 +7,14 @@ import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import {HttpClientModule} from "@angular/common/http";
 import {FormsModule} from "@angular/forms";
+import { TemperatureEntryComponent } from './components/temperature-entry/temperature-entry.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    DashboardComponent
+    DashboardComponent,
+    TemperatureEntryComponent
   ],
   imports: [
     BrowserModule,
