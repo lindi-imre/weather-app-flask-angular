@@ -26,7 +26,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getActualWeather(): any{
-    this.client.get<any>('http://localhost:5000/actual-weather',
+    this.client.get<any>('https://c3f7-2a01-36d-1400-859d-c165-bc63-19e3-8195.eu.ngrok.io/actual-weather',
       { headers: new HttpHeaders({'token': '' + localStorage.getItem('token')})}).subscribe(resp => {
         this.city = resp.city;
         this.temperature = resp.temperature;
@@ -38,7 +38,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getForecast() {
-    this.client.get<Forecast>('http://localhost:5000/forecast',
+    this.client.get<Forecast>('https://c3f7-2a01-36d-1400-859d-c165-bc63-19e3-8195.eu.ngrok.io/forecast',
       { headers: new HttpHeaders({'token': '' + localStorage.getItem('token')})}).subscribe(resp => {
         this.forecastData = resp;
         this.forecastElements = this.forecastData?.list.slice(0, this.actualPage * 10);

@@ -9,13 +9,15 @@ import {HttpClientModule} from "@angular/common/http";
 import {FormsModule} from "@angular/forms";
 import { TemperatureEntryComponent } from './components/temperature-entry/temperature-entry.component';
 import {DatePipe} from "@angular/common";
+import { TemperatureEntryPlaceholderComponent } from './components/temperature-entry-placeholder/temperature-entry-placeholder.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     DashboardComponent,
-    TemperatureEntryComponent
+    TemperatureEntryComponent,
+    TemperatureEntryPlaceholderComponent
   ],
   imports: [
     BrowserModule,
